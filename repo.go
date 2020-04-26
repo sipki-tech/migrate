@@ -19,8 +19,9 @@ type Repo struct {
 // New return new instance Repo.
 func New(db *sql.DB, log *zap.Logger, m *Metric) *Repo {
 	return &Repo{
-		db:  db,
-		log: log,
+		db:              db,
+		log:             log,
+		metricCollector: m,
 	}
 }
 
