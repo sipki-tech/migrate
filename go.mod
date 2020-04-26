@@ -1,4 +1,4 @@
-module github.com/zergslaw/zerd-repo
+module github.com/ZergsLaw/zerg-repo
 
 go 1.14
 
