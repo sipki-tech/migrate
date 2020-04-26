@@ -11,17 +11,17 @@ import (
 // Provides a number of convenient methods for starting a transaction
 // and starting functions and wrapping returnable errors.
 type Repo struct {
-	db              *sql.DB
-	log             *zap.Logger
-	metricCollector *Metric
+	db     *sql.DB
+	log    *zap.Logger
+	metric *Metric
 }
 
 // New return new instance Repo.
 func New(db *sql.DB, log *zap.Logger, m *Metric) *Repo {
 	return &Repo{
-		db:              db,
-		log:             log,
-		metricCollector: m,
+		db:     db,
+		log:    log,
+		metric: m,
 	}
 }
 
@@ -33,7 +33,7 @@ func New(db *sql.DB, log *zap.Logger, m *Metric) *Repo {
 func (r *Repo) Tx(ctx context.Context, fn func(*sql.Tx) error, opts ...TxOption) error {
 	methodName := callerMethodName()
 
-	return r.metricCollector.collect(methodName, func() error {
+	return r.metric.collect(methodName, func() error {
 		txOption := &sql.TxOptions{}
 		for i := range opts {
 			opts[i](txOption)
@@ -69,7 +69,7 @@ func (r *Repo) Tx(ctx context.Context, fn func(*sql.Tx) error, opts ...TxOption)
 func (r *Repo) Do(fn func(*sql.DB) error) error {
 	methodName := callerMethodName()
 
-	return r.metricCollector.collect(methodName, func() error {
+	return r.metric.collect(methodName, func() error {
 		err := fn(r.db)
 		if err != nil {
 			return fmt.Errorf("%s: %w", methodName, err)
