@@ -1,9 +1,10 @@
 package zergrepo
 
 import (
-	"go.uber.org/zap"
 	"runtime"
 	"strings"
+
+	"go.uber.org/zap"
 )
 
 // WarnIfFail logs a function error if an error occurs.
