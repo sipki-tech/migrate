@@ -19,21 +19,23 @@ type Repo struct {
 	db     *sql.DB
 	log    *zap.Logger
 	metric *Metric
+	mapper Mapper
 
 	mu sync.Mutex // For migration management.
 }
 
 // New return new instance Repo.
-func New(db *sql.DB, log *zap.Logger, m *Metric) *Repo {
+func New(db *sql.DB, log *zap.Logger, m *Metric, mapper Mapper) *Repo {
 	return &Repo{
 		db:     db,
 		log:    log,
 		metric: m,
+		mapper: mapper,
 	}
 }
 
 func (r *Repo) Close() {
-	r.WarnIfFail(r.db.Close)
+	r.WarnIfFail(r.db.Close, zap.String("close", "db"))
 }
 
 // Tx automatically starts a transaction according to the parameters.
@@ -61,7 +63,7 @@ func (r *Repo) Tx(ctx context.Context, fn func(*sql.Tx) error, opts ...TxOption)
 				err = fmt.Errorf("roolback err: %w", errRollback)
 			}
 
-			return fmt.Errorf("%s: %w", methodName, err)
+			return fmt.Errorf("%s: %w", methodName, r.mapper.Map(err))
 		}
 
 		err = tx.Commit()
@@ -83,7 +85,7 @@ func (r *Repo) Do(fn func(*sql.DB) error) error {
 	return r.metric.collect(methodName, func() error {
 		err := fn(r.db)
 		if err != nil {
-			return fmt.Errorf("%s: %w", methodName, err)
+			return fmt.Errorf("%s: %w", methodName, r.mapper.Map(err))
 		}
 		return nil
 	})()
