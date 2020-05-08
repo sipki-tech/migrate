@@ -20,8 +20,8 @@ func TestConfig_DSN(t *testing.T) {
 		SSLMode:  "disable",
 	}
 
-	expected := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName)
+	expected := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSLMode)
 
 	dsn := cfg.DSN()
 

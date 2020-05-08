@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/golang/protobuf v1.4.0 // indirect
+	github.com/lib/pq v1.5.2
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pressly/goose v2.6.0+incompatible
 	github.com/prometheus/client_golang v1.5.1
