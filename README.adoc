@@ -4,7 +4,7 @@
 :hide-uri-scheme:
 If you have questions about this application, there was a bug or there are suggestions for improvement, then you can ask it in Issues, or in link:telegram[https://t.me/zergsLaw]
 
-== Library for embedding oauth registration into your service.
+== Library for create repo package.
 
 === Quick start.
 
