@@ -19,7 +19,7 @@ import (
 var (
 	Repo = &zergrepo.Repo{}
 
-	timeout = time.Second * 100000
+	timeout = time.Second * 5
 )
 
 func TestMain(m *testing.M) {
@@ -38,7 +38,7 @@ func TestMain(m *testing.M) {
 		log.Fatal(fmt.Errorf("init zap: %w", err))
 	}
 
-	metric := zergrepo.MustMetric("test", "zergrepo")
+	metric := zergrepo.MustMetric("test", "test")
 	mapper := zergrepo.NewMapper()
 
 	Repo = zergrepo.New(db, l, metric, mapper)
