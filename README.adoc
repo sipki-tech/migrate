@@ -60,7 +60,7 @@ err = Repo.Tx(ctx, func(tx *sql.Tx) error {
 
 === Additional features.
 
-Functional parameters..
+Functional parameters.
 
 [source,go]
 -----
