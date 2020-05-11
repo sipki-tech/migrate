@@ -15,13 +15,14 @@ type Mapper interface {
 	Map(err error) error
 }
 
-type mapper struct {
+// ErrMapper is implements Mapper.
+type ErrMapper struct {
 	converters []Convert
 }
 
-// NewMapper create a new instance mapper.
-func NewMapper(converters ...Convert) *mapper {
-	return &mapper{
+// NewMapper create a new instance ErrMapper.
+func NewMapper(converters ...Convert) *ErrMapper {
+	return &ErrMapper{
 		converters: converters,
 	}
 }
@@ -56,7 +57,7 @@ func PQConstraint(target error, constraint string) Convert {
 
 // Map looking for one of all the functions that can convert an error.
 // If it is not found, it will return the original error.
-func (m *mapper) Map(err error) error {
+func (m *ErrMapper) Map(err error) error {
 	for i := range m.converters {
 		convertErr := m.converters[i](err)
 		if convertErr != nil {

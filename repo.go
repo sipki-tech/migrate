@@ -3,12 +3,9 @@ package zergrepo
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
-	"strings"
 	"sync"
 
-	"github.com/pressly/goose"
 	"go.uber.org/zap"
 )
 
@@ -34,6 +31,7 @@ func New(db *sql.DB, log *zap.Logger, m *Metric, mapper Mapper) *Repo {
 	}
 }
 
+// Close database connection.
 func (r *Repo) Close() {
 	r.WarnIfFail(r.db.Close, zap.String("close", "db"))
 }
@@ -89,32 +87,4 @@ func (r *Repo) Do(fn func(*sql.DB) error) error {
 		}
 		return nil
 	})()
-}
-
-// Errors.
-var (
-	ErrNotValidateArg = errors.New("no migration command or args")
-)
-
-// Migrate data, uses goose to migrate.
-func (r *Repo) Migrate(dir string, cmd string) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	cmdArgs := strings.Fields(cmd)
-	if len(cmdArgs) < 2 {
-		return fmt.Errorf("%w: %s", ErrNotValidateArg, cmd)
-	}
-
-	cmd, args := cmdArgs[0], cmdArgs[1:]
-	err := goose.Run(cmd, r.db, dir, args...)
-	if err == nil && cmd == "create" {
-		err = goose.Run("fix", r.db, dir)
-	}
-
-	if err != nil {
-		return fmt.Errorf("goose run: %w", err)
-	}
-
-	return nil
 }
