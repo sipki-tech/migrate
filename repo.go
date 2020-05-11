@@ -16,13 +16,13 @@ type Repo struct {
 	db     *sql.DB
 	log    *zap.Logger
 	metric *Metric
-	mapper Mapper
+	mapper Mapperer
 
 	mu sync.Mutex // For migration management.
 }
 
 // New return new instance Repo.
-func New(db *sql.DB, log *zap.Logger, m *Metric, mapper Mapper) *Repo {
+func New(db *sql.DB, log *zap.Logger, m *Metric, mapper Mapperer) *Repo {
 	return &Repo{
 		db:     db,
 		log:    log,

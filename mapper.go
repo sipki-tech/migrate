@@ -6,29 +6,29 @@ import (
 	"github.com/lib/pq"
 )
 
-// Convert converts certain errors into others.
+// ErrMapFunc converts certain errors into others.
 // It is necessary for an opportunity not to lift errors of a database in the top layers.
-type Convert func(error) error
+type ErrMapFunc func(error) error
 
-// Mapper responsible for converting some types of errors into others.
-type Mapper interface {
+// Mapperer responsible for converting some types of errors into others.
+type Mapperer interface {
 	Map(err error) error
 }
 
-// ErrMapper is implements Mapper.
-type ErrMapper struct {
-	converters []Convert
+// Mapper is implements Mapperer.
+type Mapper struct {
+	converters []ErrMapFunc
 }
 
-// NewMapper create a new instance ErrMapper.
-func NewMapper(converters ...Convert) *ErrMapper {
-	return &ErrMapper{
+// NewMapper create a new instance Mapper.
+func NewMapper(converters ...ErrMapFunc) *Mapper {
+	return &Mapper{
 		converters: converters,
 	}
 }
 
 // NewConvert returns the converter function.
-func NewConvert(target error, variables ...error) Convert {
+func NewConvert(target error, variables ...error) ErrMapFunc {
 	return func(err error) error {
 		for i := range variables {
 			if errors.Is(err, variables[i]) {
@@ -40,7 +40,7 @@ func NewConvert(target error, variables ...error) Convert {
 }
 
 // PQConstraint returns a postgres oriented converter.
-func PQConstraint(target error, constraint string) Convert {
+func PQConstraint(target error, constraint string) ErrMapFunc {
 	return func(err error) error {
 		pqErr, ok := err.(*pq.Error)
 		if !ok {
@@ -57,7 +57,7 @@ func PQConstraint(target error, constraint string) Convert {
 
 // Map looking for one of all the functions that can convert an error.
 // If it is not found, it will return the original error.
-func (m *ErrMapper) Map(err error) error {
+func (m *Mapper) Map(err error) error {
 	for i := range m.converters {
 		convertErr := m.converters[i](err)
 		if convertErr != nil {
