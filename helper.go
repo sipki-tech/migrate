@@ -3,14 +3,12 @@ package zergrepo
 import (
 	"runtime"
 	"strings"
-
-	"go.uber.org/zap"
 )
 
 // WarnIfFail logs a function error if an error occurs.
-func (r *Repo) WarnIfFail(fn func() error, fields ...zap.Field) {
+func (r *Repo) WarnIfFail(fn func() error) {
 	if err := fn(); err != nil {
-		r.log.Warn("failed call func", append(fields, zap.Error(err))...)
+		r.log.Warnf("failed call func: %s", err)
 	}
 }
 

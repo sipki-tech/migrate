@@ -41,7 +41,7 @@ func TestMain(m *testing.M) {
 	metric := zergrepo.MustMetric("test", "test")
 	mapper := zergrepo.NewMapper()
 
-	Repo = zergrepo.New(db, l, metric, mapper)
+	Repo = zergrepo.New(db, l.Sugar(), metric, mapper)
 
 	os.Exit(m.Run())
 }

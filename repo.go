@@ -5,8 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"sync"
-
-	"go.uber.org/zap"
 )
 
 // Repo The wrapper around *sql.DB.
@@ -14,15 +12,20 @@ import (
 // and starting functions and wrapping returnable errors.
 type Repo struct {
 	db     *sql.DB
-	log    *zap.Logger
+	log    Logger
 	metric *Metric
 	mapper Mapperer
 
 	mu sync.Mutex // For migration management.
 }
 
+// Logger for logging :).
+type Logger interface {
+	Warnf(format string, args ...interface{})
+}
+
 // New return new instance Repo.
-func New(db *sql.DB, log *zap.Logger, m *Metric, mapper Mapperer) *Repo {
+func New(db *sql.DB, log Logger, m *Metric, mapper Mapperer) *Repo {
 	return &Repo{
 		db:     db,
 		log:    log,
@@ -33,7 +36,7 @@ func New(db *sql.DB, log *zap.Logger, m *Metric, mapper Mapperer) *Repo {
 
 // Close database connection.
 func (r *Repo) Close() {
-	r.WarnIfFail(r.db.Close, zap.String("close", "db"))
+	r.WarnIfFail(r.db.Close)
 }
 
 // Tx automatically starts a transaction according to the parameters.

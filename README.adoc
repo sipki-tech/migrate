@@ -34,7 +34,7 @@ ErrNotFound := errors.New("not found")
 // Create mapper for convert database error to error business logic.
 mapper := zergrepo.NewMapper(zergrepo.NewConvert(ErrNotFound, sql.ErrNoRows))
 
-Repo = zergrepo.New(db, l, metric, mapper)
+Repo = zergrepo.New(db, l.Sugar(), metric, mapper)
 defer Repo.Close()
 
 // Example query.
