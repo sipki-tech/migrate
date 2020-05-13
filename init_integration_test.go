@@ -1,3 +1,5 @@
+// +build integration
+
 package zergrepo_test
 
 import (
