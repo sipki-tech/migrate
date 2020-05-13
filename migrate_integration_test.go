@@ -53,21 +53,30 @@ func TestRepo_UpAndDownSmoke(t *testing.T) {
 	t.Parallel()
 
 	migrates := []zergrepo.Migrate{migrateUser, migrateProduct}
+	// Register you migrate.
+	err := zergrepo.RegisterMetric(migrates...)
+	assert.Nil(t, err)
 
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout*1000)
 	defer cancel()
 
-	// UP only one migrate.
-	err := Repo.Up(ctx, migrateUser)
+	// Migration to a specific version.
+	err = Repo.UpTo(ctx, 1)
 	assert.Nil(t, err)
-
-	// Down all.
-	err = Repo.Down(ctx, migrates...)
+	// Starting migration of the next version.
+	err = Repo.UpOne(ctx)
 	assert.Nil(t, err)
-
-	err = Repo.Up(ctx, migrates...)
+	// Rollback to a specific version.
+	err = Repo.DownTo(ctx, 2)
 	assert.Nil(t, err)
-
-	err = Repo.Down(ctx, migrates...)
+	// Rollback current migration.
+	err = Repo.Down(ctx)
+	assert.Nil(t, err)
+	// Up all migration.
+	err = Repo.Up(ctx)
+	assert.Nil(t, err)
+	// Rollback all migration.
+	err = Repo.Reset(ctx)
 	assert.Nil(t, err)
 }
+

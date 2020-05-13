@@ -34,7 +34,7 @@ ErrNotFound := errors.New("not found")
 // Create mapper for convert database error to error business logic.
 mapper := zergrepo.NewMapper(zergrepo.NewConvert(ErrNotFound, sql.ErrNoRows))
 
-Repo = zergrepo.New(db, l.Sugar(), metric, mapper)
+Repo = zergrepo.New(db, l.Named("zergrepo").Sugar(), metric, mapper)
 defer Repo.Close()
 
 // Example query.
@@ -80,3 +80,63 @@ err = Repo.Tx(ctx, func(tx *sql.Tx) error {
 }, zergrepo.ReadOnly())
 -----
 
+Migration.
+
+[source,go]
+-----
+// Create you migrate objects.
+migrateUser := zergrepo.Migrate{
+    Version: 1,
+    Up:      zergrepo.Query(upTableUserQuery),
+    Down:    zergrepo.Query(downTableUserQuery),
+}
+
+migrateProduct := zergrepo.Migrate{
+    Version: 2,
+    Up:      zergrepo.Query(upTableProductQuery),
+    Down:    zergrepo.Query(downTableProductQuery),
+}
+
+// Register you migration.
+err := zergrepo.RegisterMetric(migrateUser, migrateProduct)
+if err != nil {
+	log.Fatal(err)
+}
+
+// Migration to a specific version.
+err = Repo.UpTo(ctx, 1)
+if err != nil {
+	log.Fatal(err)
+}
+
+// Starting migration of the next version.
+err = Repo.UpOne(ctx)
+if err != nil {
+	log.Fatal(err)
+}
+
+// Rollback to a specific version.
+err = Repo.DownTo(ctx, 2)
+if err != nil {
+	log.Fatal(err)
+}
+
+// Rollback current migration.
+err = Repo.Down(ctx)
+if err != nil {
+	log.Fatal(err)
+}
+
+// Up all migration.
+err = Repo.Up(ctx)
+if err != nil {
+	log.Fatal(err)
+}
+
+// Rollback all migration.
+err = Repo.Reset(ctx)
+if err != nil {
+	log.Fatal(err)
+}
+
+-----

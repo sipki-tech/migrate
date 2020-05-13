@@ -1,5 +1,3 @@
-// +build integration
-
 package zergrepo_test
 
 import (
@@ -10,10 +8,9 @@ import (
 	"testing"
 	"time"
 
-	"go.uber.org/zap"
-
 	zergrepo "github.com/ZergsLaw/zerg-repo"
 	_ "github.com/lib/pq"
+	"go.uber.org/zap"
 )
 
 var (
@@ -41,7 +38,7 @@ func TestMain(m *testing.M) {
 	metric := zergrepo.MustMetric("test", "test")
 	mapper := zergrepo.NewMapper()
 
-	Repo = zergrepo.New(db, l.Sugar(), metric, mapper)
+	Repo = zergrepo.New(db, l.Named("zergrepo").Sugar(), metric, mapper)
 
 	os.Exit(m.Run())
 }

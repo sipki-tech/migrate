@@ -5,13 +5,15 @@ import (
 	"database/sql"
 	"fmt"
 	"sync"
+
+	"github.com/jmoiron/sqlx"
 )
 
 // Repo The wrapper around *sql.DB.
 // Provides a number of convenient methods for starting a transaction
 // and starting functions and wrapping returnable errors.
 type Repo struct {
-	db     *sql.DB
+	db     *sqlx.DB
 	log    Logger
 	metric *Metric
 	mapper Mapperer
@@ -25,7 +27,7 @@ type Logger interface {
 }
 
 // New return new instance Repo.
-func New(db *sql.DB, log Logger, m *Metric, mapper Mapperer) *Repo {
+func New(db *sqlx.DB, log Logger, m *Metric, mapper Mapperer) *Repo {
 	return &Repo{
 		db:     db,
 		log:    log,
@@ -44,7 +46,7 @@ func (r *Repo) Close() {
 // If the callback returns the error, it will be wrapped and enriched with
 // information about where the transaction was called from.
 // Automatically collects metrics for function calls.
-func (r *Repo) Tx(ctx context.Context, fn func(*sql.Tx) error, opts ...TxOption) error {
+func (r *Repo) Tx(ctx context.Context, fn func(*sqlx.Tx) error, opts ...TxOption) error {
 	methodName := callerMethodName()
 
 	return r.metric.collect(methodName, func() error {
@@ -53,7 +55,7 @@ func (r *Repo) Tx(ctx context.Context, fn func(*sql.Tx) error, opts ...TxOption)
 			opts[i](txOption)
 		}
 
-		tx, err := r.db.BeginTx(ctx, txOption)
+		tx, err := r.db.BeginTxx(ctx, txOption)
 		if err != nil {
 			return fmt.Errorf("%s: %w", methodName, err)
 		}
@@ -80,7 +82,7 @@ func (r *Repo) Tx(ctx context.Context, fn func(*sql.Tx) error, opts ...TxOption)
 // If the callback returns the error, it will be wrapped and enriched with
 // information about where the transaction was called from.
 // Automatically collects metrics for function calls.
-func (r *Repo) Do(fn func(*sql.DB) error) error {
+func (r *Repo) Do(fn func(*sqlx.DB) error) error {
 	methodName := callerMethodName()
 
 	return r.metric.collect(methodName, func() error {

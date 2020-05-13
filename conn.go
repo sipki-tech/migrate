@@ -2,12 +2,13 @@ package zergrepo
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/jmoiron/sqlx"
 )
 
 // Config contains basic data for connecting to the database.
@@ -71,7 +72,7 @@ func (c Config) DSN() string {
 }
 
 // Connect to connect to the database using default values.
-func Connect(ctx context.Context, driver string, options ...Option) (*sql.DB, error) {
+func Connect(ctx context.Context, driver string, options ...Option) (*sqlx.DB, error) {
 	cfg := DefaultConfig()
 	for i := range options {
 		options[i](cfg)
@@ -86,8 +87,8 @@ type DSN interface {
 }
 
 // ConnectByCfg connect to database by config.
-func ConnectByCfg(ctx context.Context, driver string, cfg DSN) (*sql.DB, error) {
-	db, err := sql.Open(driver, cfg.DSN())
+func ConnectByCfg(ctx context.Context, driver string, cfg DSN) (*sqlx.DB, error) {
+	db, err := sqlx.Open(driver, cfg.DSN())
 	if err != nil {
 		return nil, fmt.Errorf("connect database: %w", err)
 	}
