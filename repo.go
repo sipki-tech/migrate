@@ -42,39 +42,49 @@ func (r *Repo) Close() {
 }
 
 // Tx automatically starts a transaction according to the parameters.
-// If the options are not sent, the transaction will start with default parameters.
 // If the callback returns the error, it will be wrapped and enriched with
 // information about where the transaction was called from.
 // Automatically collects metrics for function calls.
-func (r *Repo) Tx(ctx context.Context, fn func(*sqlx.Tx) error, opts ...TxOption) error {
+func (r *Repo) Tx(ctx context.Context, fn func(*sqlx.Tx) error) error {
 	methodName := callerMethodName()
 
 	return r.metric.collect(methodName, func() error {
-		txOption := &sql.TxOptions{}
-		for i := range opts {
-			opts[i](txOption)
+		return r.tx(ctx, methodName, nil, fn)
+	})()
+}
+
+func (r *Repo) tx(ctx context.Context, methodName string, opts *sql.TxOptions, fn func(*sqlx.Tx) error) error {
+	tx, err := r.db.BeginTxx(ctx, opts)
+	if err != nil {
+		return fmt.Errorf("%s: %w", methodName, err)
+	}
+
+	err = fn(tx)
+	if err != nil {
+		if errRollback := tx.Rollback(); errRollback != nil {
+			err = fmt.Errorf("roolback err: %w", errRollback)
 		}
 
-		tx, err := r.db.BeginTxx(ctx, txOption)
-		if err != nil {
-			return fmt.Errorf("%s: %w", methodName, err)
-		}
+		return fmt.Errorf("%s: %w", methodName, r.mapper.Map(err))
+	}
 
-		err = fn(tx)
-		if err != nil {
-			if errRollback := tx.Rollback(); errRollback != nil {
-				err = fmt.Errorf("roolback err: %w", errRollback)
-			}
+	err = tx.Commit()
+	if err != nil {
+		return fmt.Errorf("%s: %w", methodName, err)
+	}
 
-			return fmt.Errorf("%s: %w", methodName, r.mapper.Map(err))
-		}
+	return nil
+}
 
-		err = tx.Commit()
-		if err != nil {
-			return fmt.Errorf("%s: %w", methodName, err)
-		}
+// TxByCfg automatically starts a transaction according to the parameters.
+// If the callback returns the error, it will be wrapped and enriched with
+// information about where the transaction was called from.
+// Automatically collects metrics for function calls.
+func (r *Repo) TxByCfg(ctx context.Context, opts *sql.TxOptions, fn func(*sqlx.Tx) error) error {
+	methodName := callerMethodName()
 
-		return nil
+	return r.metric.collect(methodName, func() error {
+		return r.tx(ctx, methodName, opts, fn)
 	})()
 }
 

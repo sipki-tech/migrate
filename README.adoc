@@ -69,15 +69,6 @@ db, err := zergrepo.Connect(ctx, "postgres", zergrepo.Host("localhost"))
 if err != nil {
 	log.Fatal(fmt.Errorf("connect db: %w", err))
 }
-
-// Functional parameters for start tx.
-err = Repo.Tx(ctx, func(tx *sql.Tx) error {
-	err = tx.QueryRowContext(ctx, "query").Scan(&val)
-	if err != nil {
-		return err
-	}
-	return nil
-}, zergrepo.ReadOnly())
 -----
 
 Migration.
