@@ -1,6 +1,6 @@
 = zerg-repo.
 
-https://pkg.go.dev/github.com/ZergsLaw/zerg-repo[image:https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=flat-square[go.dev
+https://pkg.go.dev/github.com/ZergsLaw/zerg-repo?tab=doc[image:https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=flat-square[go.dev
 reference])]
 
 == Link
@@ -8,7 +8,6 @@ reference])]
 If you have questions about this application, there was a bug or there are suggestions for improvement, then you can ask it in Issues, or in link:telegram[https://t.me/zergsLaw]
 
 == Library for create repo package.
-https://pkg.go.dev/github.com/ZergsLaw/zerg-repo?tab=doc
 === Quick start.
 
 [source,go]
