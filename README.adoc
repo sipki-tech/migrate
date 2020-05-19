@@ -17,6 +17,11 @@ USAGE:
    zergrepo command [command options] [arguments...]
 ----
 
+== Install.
+----
+go get github.com/ZergsLaw/zerg-repo/zergrepo
+----
+
 === Basic commands.
 
 [source]
