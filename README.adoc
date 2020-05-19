@@ -7,6 +7,78 @@ reference])]
 :hide-uri-scheme:
 If you have questions about this application, there was a bug or there are suggestions for improvement, then you can ask it in Issues, or in link:telegram[https://t.me/zergsLaw]
 
+== Migration cli.
+
+Thin and lightweight client for performing migrations supports commands for migrations and their rollback.
+
+[source]
+----
+USAGE:
+   zergrepo command [command options] [arguments...]
+----
+
+=== Basic commands.
+
+[source]
+----
+COMMANDS:
+   version  get version
+   migrate  exec migrate
+   create   create migrate file
+   help, h  Shows a list of commands or help for one command
+----
+
+== Creating a migration file.
+
+[source]
+----
+USAGE:
+    zergrepo create [command options]
+
+OPTIONS:
+   --migrate-name value, -M value  migration file name
+   --dir value, -D value           migration file location
+   --help, -h                      show help (default: false)
+----
+
+== Starting migration.
+
+[source]
+----
+NAME:
+   zergrepo migrate - exec migrate
+
+USAGE:
+   zergrepo migrate [command options]
+
+DESCRIPTION:
+   Migrate the DB to the most recent version available
+
+OPTIONS:
+   --db-driver value, -d value  database driver one of (postgres,mysql) (default: "postgres") [$DB_DRIVER]
+   --operation value, -o value  migration command one of (up,up-to,up-one,down,down-to,reset)
+   --to value, -t value         on what element to migrate (default: 0)
+   --dir value, -D value        migration file location
+   --db-name value, -n value    database name (default: "postgres") [$DB_NAME]
+   --db-user value, -u value    database user (default: "postgres") [$DB_USER]
+   --db-pass value, -p value    database password (default: "postgres") [$DB_PASS]
+   --db-host value, -H value    database host (default: "localhost") [$DB_HOST]
+   --db-port value, -P value    database port (default: 5432) [$DB_PORT]
+   --help, -h                   show help (default: false)
+----
+
+== Example:
+
+[source,bash]
+----
+// Also note that there are many default parameters for a convenient start.
+zergrepo create --dir migrates --migrate-name create_user_table
+// Up migrate
+zergrepo migrate --opration up --dir migrates --db-host <host> --db-name <name> etc...
+// Rollback all migrates
+zergrepo migrate --opration reset --dir migrates --db-host <host> --db-name <name> etc...
+----
+
 == Library for create repo package.
 === Quick start.
 

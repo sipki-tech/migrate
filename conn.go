@@ -44,7 +44,7 @@ func DefaultConfig() *Config {
 	}
 }
 
-// DSN returns a formatted string in DSN format.
+// Cfg returns a formatted string in Cfg format.
 func (c Config) DSN() string {
 	const tagName = `dsn`
 
@@ -81,13 +81,13 @@ func Connect(ctx context.Context, driver string, options ...Option) (*sqlx.DB, e
 	return ConnectByCfg(ctx, driver, *cfg)
 }
 
-// DSN for convent replace for custom config.
-type DSN interface {
+// Cfg for convent replace for custom config.
+type Cfg interface {
 	DSN() string
 }
 
 // ConnectByCfg connect to database by config.
-func ConnectByCfg(ctx context.Context, driver string, cfg DSN) (*sqlx.DB, error) {
+func ConnectByCfg(ctx context.Context, driver string, cfg Cfg) (*sqlx.DB, error) {
 	db, err := sqlx.Open(driver, cfg.DSN())
 	if err != nil {
 		return nil, fmt.Errorf("connect database: %w", err)

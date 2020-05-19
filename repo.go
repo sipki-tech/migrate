@@ -24,6 +24,7 @@ type Repo struct {
 // Logger for logging :).
 type Logger interface {
 	Warnf(format string, args ...interface{})
+	Infof(format string, args ...interface{})
 }
 
 // New return new instance Repo.

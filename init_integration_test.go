@@ -11,7 +11,6 @@ import (
 	"time"
 
 	zergrepo "github.com/ZergsLaw/zerg-repo"
-	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 )
 

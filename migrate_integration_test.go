@@ -79,4 +79,3 @@ func TestRepo_UpAndDownSmoke(t *testing.T) {
 	err = Repo.Reset(ctx)
 	assert.Nil(t, err)
 }
-

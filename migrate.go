@@ -115,7 +115,9 @@ func (r *Repo) UpOne(ctx context.Context) error {
 	}
 
 	for i := range registeredMigrates {
-		if registeredMigrates[i].Version == currentVersion {
+		if currentVersion == 0 {
+			return r.up(ctx, registeredMigrates[0])
+		} else if registeredMigrates[i].Version == currentVersion {
 			if len(registeredMigrates) > i+1 {
 				return r.up(ctx, registeredMigrates[i+1])
 			} else {
@@ -151,7 +153,7 @@ func (r *Repo) up(ctx context.Context, migrates ...Migrate) error {
 			if err != nil {
 				return fmt.Errorf("up %d: %w", migrate.Version, err)
 			}
-
+			r.log.Infof("up migrate: version %d", migrate.Version)
 			_, err = tx.ExecContext(ctx, "INSERT INTO migration (version) VALUES ($1)", migrate.Version)
 			if err != nil {
 				return fmt.Errorf("insert new version: %w", err)
@@ -226,7 +228,7 @@ func (r *Repo) down(ctx context.Context, migrates ...Migrate) error {
 			if err != nil {
 				return fmt.Errorf("down %d: %w", migrate.Version, err)
 			}
-
+			r.log.Infof("rollback migrate: version %d", migrate.Version)
 			_, err = tx.ExecContext(ctx, "DELETE FROM migration WHERE version = $1", migrate.Version)
 			if err != nil {
 				return fmt.Errorf("delete version: %w", err)

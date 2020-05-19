@@ -1,12 +1,20 @@
+run:
+  tests: false
+  skip-dirs:
+    - mock
+
 linters-settings:
-  gocritic:
-    enabled-tags:
-      - performance
+  lll:
+    line-length: 150
   maligned:
     suggest-new: true
 
 linters:
   enable-all: true
-  disable:
-#    - gomnd
   fast: false
+
+issues:
+  exclude-rules:
+    - path: cmd/
+      linters:
+        - gochecknoglobals
