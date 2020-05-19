@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	zergrepo "github.com/ZergsLaw/zerg-repo"
-	"github.com/ZergsLaw/zerg-repo/cli/core"
+	"github.com/ZergsLaw/zerg-repo/zergrepo/core"
 )
 
 // Migrater is responsible for data migration to the database.

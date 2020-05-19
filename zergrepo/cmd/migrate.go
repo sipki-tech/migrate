@@ -4,9 +4,9 @@ import (
 	"errors"
 
 	zergrepo "github.com/ZergsLaw/zerg-repo"
-	"github.com/ZergsLaw/zerg-repo/cli/core"
-	"github.com/ZergsLaw/zerg-repo/cli/fs"
-	"github.com/ZergsLaw/zerg-repo/cli/migrater"
+	"github.com/ZergsLaw/zerg-repo/zergrepo/core"
+	"github.com/ZergsLaw/zerg-repo/zergrepo/fs"
+	"github.com/ZergsLaw/zerg-repo/zergrepo/migrater"
 	"github.com/urfave/cli/v2"
 )
 
@@ -59,7 +59,7 @@ func migrateAction(ctx *cli.Context) error {
 		return err
 	}
 
-	metric := zergrepo.MustMetric("cli", "migrater")
+	metric := zergrepo.MustMetric("zergrepo", "migrater")
 	r := zergrepo.New(conn, log, metric, zergrepo.NewMapper())
 	defer r.Close()
 

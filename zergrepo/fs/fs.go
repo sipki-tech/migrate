@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ZergsLaw/zerg-repo/cli/core"
+	"github.com/ZergsLaw/zerg-repo/zergrepo/core"
 )
 
 type fs struct{}

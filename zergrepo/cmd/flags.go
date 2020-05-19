@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	zergrepo "github.com/ZergsLaw/zerg-repo"
-	"github.com/ZergsLaw/zerg-repo/cli/core"
+	"github.com/ZergsLaw/zerg-repo/zergrepo/core"
 	"github.com/urfave/cli/v2"
 )
 
