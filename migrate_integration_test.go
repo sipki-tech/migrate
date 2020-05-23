@@ -57,7 +57,7 @@ func TestRepo_UpAndDownSmoke(t *testing.T) {
 	err := zergrepo.RegisterMetric(migrates...)
 	assert.Nil(t, err)
 
-	ctx, cancel := context.WithTimeout(context.Background(), timeout*1000)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	// Migration to a specific version.

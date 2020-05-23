@@ -47,11 +47,6 @@ func RegisterMetric(m ...Migrate) error {
 	}
 
 	registeredMigrates = append(registeredMigrates, m...)
-
-	sort.Slice(registeredMigrates, func(i, j int) bool {
-		return registeredMigrates[i].Version < registeredMigrates[j].Version
-	})
-
 	return nil
 }
 
@@ -143,6 +138,10 @@ func (r *Repo) up(ctx context.Context, migrates ...Migrate) error {
 		if err != nil {
 			return err
 		}
+
+		sort.Slice(migrates, func(i, j int) bool {
+			return migrates[i].Version < migrates[j].Version
+		})
 
 		for _, migrate := range migrates {
 			if currentVersion >= migrate.Version {
