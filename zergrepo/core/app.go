@@ -4,6 +4,7 @@ package core
 import (
 	"context"
 	"sort"
+	"strings"
 )
 
 type (
@@ -76,6 +77,10 @@ func (a *core) Migrate(ctx context.Context, dir string, cfg Config) error {
 
 // NewMigrate create new migrate files and add example query.
 func (a *core) NewMigrate(_ context.Context, dir, name string) error {
+	if strings.TrimSpace(dir) == "" {
+		dir = "."
+	}
+
 	files, err := a.fs.Walk(dir)
 	if err != nil {
 		return err

@@ -9,7 +9,7 @@ import (
 
 var log = logrus.New()
 
-const version = `0.4.1`
+const version = `0.4.2`
 
 var Version = &cli.Command{
 	Name:         "version",
