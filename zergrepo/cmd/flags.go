@@ -25,13 +25,13 @@ var (
 		Usage:   "on what element to migrate",
 	}
 	Operation = &cli.StringFlag{
-		Name:     "Operation",
+		Name:     "operation",
 		Aliases:  []string{"o"},
 		Usage:    fmt.Sprintf("migration command one of (%s,%s,%s,%s,%s,%s)", core.Up, core.UpTo, core.UpOne, core.Down, core.DownTo, core.Reset),
 		Required: true,
 	}
 	Dir = &cli.StringFlag{
-		Name:    "Dir",
+		Name:    "dir",
 		Aliases: []string{"D"},
 		Usage:   "migration file location",
 	}
