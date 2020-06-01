@@ -13,7 +13,7 @@ import (
 var Migrate = &cli.Command{
 	Name:         "migrate",
 	Usage:        "exec migrate",
-	Description:  "Migrate the DB to the most recent version available",
+	Description:  "Migrate the DB To the most recent version available",
 	BashComplete: cli.DefaultAppComplete,
 	Before:       beforeMigrateAction,
 	After:        afterMigrateAction,
@@ -37,22 +37,22 @@ const (
 )
 
 func migrateAction(ctx *cli.Context) error {
-	cmd, err := parse(ctx.String(operation.Name))
+	cmd, err := parse(ctx.String(Operation.Name))
 	if err != nil {
 		return err
 	}
 
-	dbDriver := ctx.String(driver.Name)
+	dbDriver := ctx.String(Driver.Name)
 	if dbDriver != pg && dbDriver != ms {
 		return ErrUnknownDriver
 	}
 
 	conn, err := zergrepo.ConnectByCfg(ctx.Context, dbDriver, zergrepo.Config{
-		Host:     ctx.String(host.Name),
-		Port:     ctx.Int(port.Name),
-		User:     ctx.String(user.Name),
-		Password: ctx.String(pass.Name),
-		DBName:   ctx.String(name.Name),
+		Host:     ctx.String(Host.Name),
+		Port:     ctx.Int(Port.Name),
+		User:     ctx.String(User.Name),
+		Password: ctx.String(Pass.Name),
+		DBName:   ctx.String(Name.Name),
 		SSLMode:  zergrepo.DBSSLMode,
 	})
 	if err != nil {
@@ -68,15 +68,15 @@ func migrateAction(ctx *cli.Context) error {
 
 	c := core.New(filesSystem, m)
 
-	return c.Migrate(ctx.Context, ctx.String(dir.Name), core.Config{
+	return c.Migrate(ctx.Context, ctx.String(Dir.Name), core.Config{
 		Cmd: cmd,
-		To:  ctx.Uint(to.Name),
+		To:  ctx.Uint(To.Name),
 	})
 }
 
 var (
-	ErrUnknownOperation = errors.New("unknown operation")
-	ErrUnknownDriver    = errors.New("unknown driver")
+	ErrUnknownOperation = errors.New("unknown Operation")
+	ErrUnknownDriver    = errors.New("unknown Driver")
 )
 
 func parse(op string) (cmd core.MigrateCmd, err error) {

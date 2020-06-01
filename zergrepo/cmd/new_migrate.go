@@ -12,7 +12,7 @@ var NewMigrate = &cli.Command{
 	Description:  "Creates a new migration file with test data.",
 	BashComplete: cli.DefaultAppComplete,
 	Action:       newMigrateAction,
-	Flags:        []cli.Flag{migrateName, dir},
+	Flags:        []cli.Flag{MigrateName, Dir},
 }
 
 func newMigrateAction(ctx *cli.Context) error {
@@ -20,5 +20,5 @@ func newMigrateAction(ctx *cli.Context) error {
 
 	c := core.New(filesSystem, nil)
 
-	return c.NewMigrate(ctx.Context, ctx.String(dir.Name), ctx.String(migrateName.Name))
+	return c.NewMigrate(ctx.Context, ctx.String(Dir.Name), ctx.String(MigrateName.Name))
 }

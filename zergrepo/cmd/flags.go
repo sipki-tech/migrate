@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	dbFlags = []cli.Flag{driver, operation, to, dir, name, user, pass, host, port}
-	driver  = &cli.StringFlag{
+	dbFlags = []cli.Flag{Driver, Operation, To, Dir, Name, User, Pass, Host, Port}
+	Driver  = &cli.StringFlag{
 		Name:       "db-driver",
 		Aliases:    []string{"d"},
 		Usage:      "database driver one of (postgres,mysql)",
@@ -19,23 +19,23 @@ var (
 		Required:   true,
 		HasBeenSet: true,
 	}
-	to = &cli.UintFlag{
+	To = &cli.UintFlag{
 		Name:    "to",
 		Aliases: []string{"t"},
 		Usage:   "on what element to migrate",
 	}
-	operation = &cli.StringFlag{
-		Name:     "operation",
+	Operation = &cli.StringFlag{
+		Name:     "Operation",
 		Aliases:  []string{"o"},
 		Usage:    fmt.Sprintf("migration command one of (%s,%s,%s,%s,%s,%s)", core.Up, core.UpTo, core.UpOne, core.Down, core.DownTo, core.Reset),
 		Required: true,
 	}
-	dir = &cli.StringFlag{
-		Name:    "dir",
+	Dir = &cli.StringFlag{
+		Name:    "Dir",
 		Aliases: []string{"D"},
 		Usage:   "migration file location",
 	}
-	name = &cli.StringFlag{
+	Name = &cli.StringFlag{
 		Name:       "db-name",
 		Aliases:    []string{"n"},
 		Usage:      "database name",
@@ -44,7 +44,7 @@ var (
 		Required:   true,
 		HasBeenSet: true,
 	}
-	user = &cli.StringFlag{
+	User = &cli.StringFlag{
 		Name:       "db-user",
 		Aliases:    []string{"u"},
 		Usage:      "database user",
@@ -53,7 +53,7 @@ var (
 		Required:   true,
 		HasBeenSet: true,
 	}
-	pass = &cli.StringFlag{
+	Pass = &cli.StringFlag{
 		Name:       "db-pass",
 		Aliases:    []string{"p"},
 		Usage:      "database password",
@@ -62,7 +62,7 @@ var (
 		Required:   true,
 		HasBeenSet: true,
 	}
-	host = &cli.StringFlag{
+	Host = &cli.StringFlag{
 		Name:       "db-host",
 		Aliases:    []string{"H"},
 		Usage:      "database host",
@@ -71,7 +71,7 @@ var (
 		Required:   true,
 		HasBeenSet: true,
 	}
-	port = &cli.IntFlag{
+	Port = &cli.IntFlag{
 		Name:       "db-port",
 		Aliases:    []string{"P"},
 		Usage:      "database port",
@@ -80,7 +80,7 @@ var (
 		Required:   true,
 		HasBeenSet: true,
 	}
-	migrateName = &cli.StringFlag{
+	MigrateName = &cli.StringFlag{
 		Name:     "migrate-name",
 		Aliases:  []string{"M"},
 		Usage:    "migration file name",
