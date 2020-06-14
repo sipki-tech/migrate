@@ -73,7 +73,7 @@ func (a *core) Migrate(ctx context.Context, dir string, cfg Config) error {
 	}
 
 	sort.Slice(files, func(i, j int) bool {
-		return files[i].Version > files[j].Version
+		return files[i].Version < files[j].Version
 	})
 
 	return a.m.Migrate(ctx, cfg, files)
