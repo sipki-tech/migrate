@@ -63,7 +63,7 @@ func (r *Repo) tx(ctx context.Context, methodName string, opts *sql.TxOptions, f
 	err = fn(tx)
 	if err != nil {
 		if errRollback := tx.Rollback(); errRollback != nil {
-			err = fmt.Errorf("roolback err: %w", errRollback)
+			err = fmt.Errorf("%w and roolback err: %s", err, errRollback)
 		}
 
 		return fmt.Errorf("%s: %w", methodName, r.mapper.Map(err))
