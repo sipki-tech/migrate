@@ -10,20 +10,20 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ZergsLaw/zerg-repo/zergrepo/core"
+	"github.com/Meat-Hook/migrate/internal/core"
 )
 
-type fs struct{}
+type FS struct{}
 
-// New create new instance core.Fs.
-func New() core.Fs {
-	return &fs{}
+// New create new instance Fs.
+func New() *FS {
+	return &FS{}
 }
 
 const ext = `.sql`
 
 // Walk searches for all migration files located in the specified directory.
-func (fs *fs) Walk(dir string) (migrates []core.Migrate, err error) {
+func (fs *FS) Walk(dir string) (migrates []core.Migrate, err error) {
 	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -64,7 +64,7 @@ func (fs *fs) Walk(dir string) (migrates []core.Migrate, err error) {
 }
 
 // CreateMigrate creates a migration file in the specified directory.
-func (fs *fs) CreateMigrate(dir, name string, m core.Migrate) error {
+func (fs *FS) CreateMigrate(dir, name string, m core.Migrate) error {
 	name = strings.Join([]string{strconv.Itoa(int(m.Version)), name + ext}, "_")
 
 	f, err := os.Create(filepath.Join(dir, name))
