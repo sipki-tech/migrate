@@ -1,8 +1,5 @@
 = zerg-repo.
 
-https://pkg.go.dev/github.com/ZergsLaw/zerg-repo?tab=doc[image:https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=flat-square[go.dev
-reference])]
-
 == Link
 :hide-uri-scheme:
 If you have questions about this application, there was a bug or there are suggestions for improvement, then you can ask it in Issues, or in link:telegram[https://t.me/zergsLaw]
@@ -14,12 +11,12 @@ Thin and lightweight client for performing migrations supports commands for migr
 [source]
 ----
 USAGE:
-   zergrepo command [command options] [arguments...]
+   migrate command [command options] [arguments...]
 ----
 
 == Install.
 ----
-go get github.com/ZergsLaw/zerg-repo/zergrepo
+go get github.com/Meat-Hook/migrate
 ----
 
 === Basic commands.
@@ -83,130 +80,3 @@ zergrepo migrate --opration up --dir migrates --db-host <host> --db-name <name> 
 // Rollback all migrates
 zergrepo migrate --opration reset --dir migrates --db-host <host> --db-name <name> etc...
 ----
-
-== Library for create repo package.
-=== Quick start.
-
-[source,go]
-----
-// Get default config.
-cfg := zergrepo.DefaultConfig()
-
-ctx, cancel := context.WithTimeout(context.Background(), timeout)
-defer cancel()
-// Helper for connect database and ping by context.
-db, err := zergrepo.ConnectByCfg(ctx, "postgres", cfg)
-if err != nil {
-	log.Fatal(fmt.Errorf("connect db: %w", err))
-}
-
-l, err := zap.NewDevelopment()
-if err != nil {
-	log.Fatal(fmt.Errorf("init zap: %w", err))
-}
-
-// Init default metric.
-metric := zergrepo.MustMetric("namespace", "subsystem")
-
-// Example error business logic.
-ErrNotFound := errors.New("not found")
-// Create mapper for convert database error to error business logic.
-mapper := zergrepo.NewMapper(zergrepo.NewConvert(ErrNotFound, sql.ErrNoRows))
-
-Repo = zergrepo.New(db, l.Named("zergrepo").Sugar(), metric, mapper)
-defer Repo.Close()
-
-// Example query.
-err = Repo.Do(func(db *sql.DB) error {
-	err := db.Ping()
-	if err != nil {
-		return err
-	}
-
-	return nil
-})
-// Example query by tx.
-err = Repo.Tx(ctx, func(tx *sql.Tx) error {
-	err = tx.QueryRowContext(ctx, "query").Scan(&val)
-	if err != nil {
-		// Return error just return the errors, the roolback will automatically happen.
-		return err
-	}
-	// It will also automatically call commit for the transaction if nil is returned.
-	return nil
-})
-----
-
-=== Additional features.
-
-Functional parameters.
-
-[source,go]
------
-// The functional parameters for connecting to the database are also supported.
-db, err := zergrepo.Connect(ctx, "postgres", zergrepo.Host("localhost"))
-if err != nil {
-	log.Fatal(fmt.Errorf("connect db: %w", err))
-}
------
-
-Migration.
-
-[source,go]
------
-// Create you migrate objects.
-migrateUser := zergrepo.Migrate{
-    Version: 1,
-    Up:      zergrepo.Query(upTableUserQuery),
-    Down:    zergrepo.Query(downTableUserQuery),
-}
-
-migrateProduct := zergrepo.Migrate{
-    Version: 2,
-    Up:      zergrepo.Query(upTableProductQuery),
-    Down:    zergrepo.Query(downTableProductQuery),
-}
-
-// Register you migration.
-err := zergrepo.RegisterMetric(migrateUser, migrateProduct)
-if err != nil {
-	log.Fatal(err)
-}
-
-// Migration to a specific version.
-err = Repo.UpTo(ctx, 1)
-if err != nil {
-	log.Fatal(err)
-}
-
-// Starting migration of the next version.
-err = Repo.UpOne(ctx)
-if err != nil {
-	log.Fatal(err)
-}
-
-// Rollback to a specific version.
-err = Repo.DownTo(ctx, 2)
-if err != nil {
-	log.Fatal(err)
-}
-
-// Rollback current migration.
-err = Repo.Down(ctx)
-if err != nil {
-	log.Fatal(err)
-}
-
-// Up all migration.
-err = Repo.Up(ctx)
-if err != nil {
-	log.Fatal(err)
-}
-
-// Rollback all migration.
-err = Repo.Reset(ctx)
-if err != nil {
-	log.Fatal(err)
-}
-
------
