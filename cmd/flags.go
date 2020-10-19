@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/Meat-Hook/migrate/internal/core"
+	"github.com/Meat-Hook/migrate/core"
 	migrate "github.com/ZergsLaw/zerg-repo"
 	"github.com/urfave/cli/v2"
 )

@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/Meat-Hook/migrate/internal/core"
+	"github.com/Meat-Hook/migrate/core"
 	"github.com/sirupsen/logrus"
 )
 

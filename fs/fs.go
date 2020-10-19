@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Meat-Hook/migrate/internal/core"
+	"github.com/Meat-Hook/migrate/core"
 )
 
 type FS struct{}

@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/Meat-Hook/migrate/internal/core"
-	"github.com/Meat-Hook/migrate/internal/fs"
+	"github.com/Meat-Hook/migrate/core"
+	"github.com/Meat-Hook/migrate/fs"
 	"github.com/stretchr/testify/assert"
 )
 

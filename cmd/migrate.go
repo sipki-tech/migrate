@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Meat-Hook/migrate/internal/core"
-	"github.com/Meat-Hook/migrate/internal/fs"
-	"github.com/Meat-Hook/migrate/internal/migrater"
+	"github.com/Meat-Hook/migrate/core"
+	"github.com/Meat-Hook/migrate/fs"
+	"github.com/Meat-Hook/migrate/migrater"
 	"github.com/urfave/cli/v2"
 )
 

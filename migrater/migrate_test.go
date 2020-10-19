@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Meat-Hook/migrate/internal/core"
-	"github.com/Meat-Hook/migrate/internal/migrater"
+	"github.com/Meat-Hook/migrate/core"
+	"github.com/Meat-Hook/migrate/migrater"
 	_ "github.com/lib/pq"
 	"github.com/ory/dockertest/v3"
 	"github.com/sirupsen/logrus"
