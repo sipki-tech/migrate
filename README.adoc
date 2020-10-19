@@ -1,4 +1,4 @@
-= zerg-repo.
+= migrate.
 
 == Link
 :hide-uri-scheme:
