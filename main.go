@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ZergsLaw/zerg-repo/zergrepo/cmd"
+	"github.com/Meat-Hook/migrate/cmd"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
@@ -19,7 +19,7 @@ import (
 var application = &cli.App{
 	Name:         filepath.Base(os.Args[0]),
 	HelpName:     filepath.Base(os.Args[0]),
-	Usage:        "Migration zergrepo.",
+	Usage:        "Migration migrate.",
 	Commands:     []*cli.Command{cmd.Version, cmd.Migrate, cmd.NewMigrate},
 	BashComplete: cli.DefaultAppComplete,
 }

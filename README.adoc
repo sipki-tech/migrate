@@ -35,7 +35,7 @@ COMMANDS:
 [source]
 ----
 USAGE:
-    zergrepo create [command options]
+    migrate create [command options]
 
 OPTIONS:
    --migrate-name value, -M value  migration file name
@@ -48,10 +48,10 @@ OPTIONS:
 [source]
 ----
 NAME:
-   zergrepo migrate - exec migrate
+   migrate migrate - exec migrate
 
 USAGE:
-   zergrepo migrate [command options]
+   migrate migrate [command options]
 
 DESCRIPTION:
    Migrate the DB to the most recent version available
@@ -74,9 +74,9 @@ OPTIONS:
 [source,bash]
 ----
 // Also note that there are many default parameters for a convenient start.
-zergrepo create --dir migrates --migrate-name create_user_table
+migrate create --dir migrates --migrate-name create_user_table
 // Up migrate
-zergrepo migrate --opration up --dir migrates --db-host <host> --db-name <name> etc...
+migrate migrate --opration up --dir migrates --db-host <host> --db-name <name> etc...
 // Rollback all migrates
-zergrepo migrate --opration reset --dir migrates --db-host <host> --db-name <name> etc...
+migrate migrate --opration reset --dir migrates --db-host <host> --db-name <name> etc...
 ----

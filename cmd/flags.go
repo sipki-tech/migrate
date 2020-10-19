@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
-	zergrepo "github.com/ZergsLaw/zerg-repo"
-	"github.com/ZergsLaw/zerg-repo/zergrepo/core"
+	"github.com/Meat-Hook/migrate/internal/core"
+	migrate "github.com/ZergsLaw/zerg-repo"
 	"github.com/urfave/cli/v2"
 )
 
@@ -40,7 +40,7 @@ var (
 		Aliases:    []string{"n"},
 		Usage:      "database name",
 		EnvVars:    []string{"DB_NAME"},
-		Value:      zergrepo.DBName,
+		Value:      migrate.DBName,
 		Required:   true,
 		HasBeenSet: true,
 	}
@@ -49,7 +49,7 @@ var (
 		Aliases:    []string{"u"},
 		Usage:      "database user",
 		EnvVars:    []string{"DB_USER"},
-		Value:      zergrepo.DBUser,
+		Value:      migrate.DBUser,
 		Required:   true,
 		HasBeenSet: true,
 	}
@@ -58,7 +58,7 @@ var (
 		Aliases:    []string{"p"},
 		Usage:      "database password",
 		EnvVars:    []string{"DB_PASS"},
-		Value:      zergrepo.DBPassword,
+		Value:      migrate.DBPassword,
 		Required:   true,
 		HasBeenSet: true,
 	}
@@ -67,7 +67,7 @@ var (
 		Aliases:    []string{"H"},
 		Usage:      "database host",
 		EnvVars:    []string{"DB_HOST"},
-		Value:      zergrepo.DBHost,
+		Value:      migrate.DBHost,
 		Required:   true,
 		HasBeenSet: true,
 	}
@@ -76,7 +76,7 @@ var (
 		Aliases:    []string{"P"},
 		Usage:      "database port",
 		EnvVars:    []string{"DB_PORT"},
-		Value:      zergrepo.DBPort,
+		Value:      migrate.DBPort,
 		Required:   true,
 		HasBeenSet: true,
 	}

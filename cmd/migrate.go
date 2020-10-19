@@ -1,12 +1,13 @@
 package cmd
 
 import (
+	"database/sql"
 	"errors"
+	"fmt"
 
-	zergrepo "github.com/ZergsLaw/zerg-repo"
-	"github.com/ZergsLaw/zerg-repo/zergrepo/core"
-	"github.com/ZergsLaw/zerg-repo/zergrepo/fs"
-	"github.com/ZergsLaw/zerg-repo/zergrepo/migrater"
+	"github.com/Meat-Hook/migrate/internal/core"
+	"github.com/Meat-Hook/migrate/internal/fs"
+	"github.com/Meat-Hook/migrate/internal/migrater"
 	"github.com/urfave/cli/v2"
 )
 
@@ -47,23 +48,33 @@ func migrateAction(ctx *cli.Context) error {
 		return ErrUnknownDriver
 	}
 
-	conn, err := zergrepo.ConnectByCfg(ctx.Context, dbDriver, zergrepo.Config{
-		Host:     ctx.String(Host.Name),
-		Port:     ctx.Int(Port.Name),
-		User:     ctx.String(User.Name),
-		Password: ctx.String(Pass.Name),
-		DBName:   ctx.String(Name.Name),
-		SSLMode:  zergrepo.DBSSLMode,
-	})
+	dsn := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		ctx.String(Host.Name),
+		ctx.Int(Port.Name),
+		ctx.String(User.Name),
+		ctx.String(Pass.Name),
+		ctx.String(Name.Name),
+	)
+
+	db, err := sql.Open(dbDriver, dsn)
 	if err != nil {
-		return err
+		return fmt.Errorf("open connect to database: %w", err)
 	}
 
-	metric := zergrepo.MustMetric("zergrepo", "migrater")
-	r := zergrepo.New(conn, log, metric, zergrepo.NewMapper())
-	defer r.Close()
+	defer func() {
+		err := db.Close()
+		if err != nil {
+			log.Warnf("close connect to database: %s", err)
+		}
+	}()
 
-	m := migrater.New(r)
+	err = db.PingContext(ctx.Context)
+	if err != nil {
+		return fmt.Errorf("ping to database: %w", err)
+	}
+
+	m := migrater.New(db, log)
 	filesSystem := fs.New()
 
 	c := core.New(filesSystem, m)

@@ -34,7 +34,7 @@ func New(db *sql.DB, l logrus.FieldLogger) *Migrater {
 }
 
 // Migrate sql requests.
-func (m *Migrater) Migrate(ctx context.Context, cfg core.Config, migrates ...core.Migrate) error {
+func (m *Migrater) Migrate(ctx context.Context, cfg core.Config, migrates []core.Migrate) error {
 	switch cfg.Cmd {
 	case core.Up:
 		return m.Up(ctx, migrates...)

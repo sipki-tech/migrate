@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/ZergsLaw/zerg-repo/zergrepo/core"
-	"github.com/ZergsLaw/zerg-repo/zergrepo/fs"
+	"github.com/Meat-Hook/migrate/internal/core"
+	"github.com/Meat-Hook/migrate/internal/fs"
 	"github.com/urfave/cli/v2"
 )
 
