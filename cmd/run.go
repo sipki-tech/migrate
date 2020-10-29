@@ -14,7 +14,7 @@ import (
 var Run = &cli.Command{
 	Name:         "run",
 	Usage:        "run migrate",
-	Description:  "Run the DB To the most recent version available",
+	Description:  "Migrate the DB To the most recent version available",
 	BashComplete: cli.DefaultAppComplete,
 	Before:       beforeMigrateAction,
 	After:        afterMigrateAction,
