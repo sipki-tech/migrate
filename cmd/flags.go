@@ -11,10 +11,10 @@ import (
 var (
 	dbFlags = []cli.Flag{Driver, Operation, To, Dir, Name, User, Pass, Host, Port}
 	Driver  = &cli.StringFlag{
-		Name:       "db-driver",
+		Name:       "driver",
 		Aliases:    []string{"d"},
 		Usage:      "database driver one of (postgres,mysql)",
-		EnvVars:    []string{"DB_DRIVER"},
+		EnvVars:    []string{"DRIVER"},
 		Value:      pg,
 		Required:   true,
 		HasBeenSet: true,
