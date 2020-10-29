@@ -25,7 +25,7 @@ go get github.com/Meat-Hook/migrate
 ----
 COMMANDS:
    version  get version
-   migrate  exec migrate
+   run      exec migrate
    create   create migrate file
    help, h  Shows a list of commands or help for one command
 ----
@@ -48,16 +48,16 @@ OPTIONS:
 [source]
 ----
 NAME:
-   migrate migrate - exec migrate
+   migrate run - start migrate
 
 USAGE:
-   migrate migrate [command options]
+   migrate run [command options]
 
 DESCRIPTION:
    Migrate the DB to the most recent version available
 
 OPTIONS:
-   --db-driver value, -d value  database driver one of (postgres,mysql) (default: "postgres") [$DB_DRIVER]
+   --driver value, -d value  database driver one of (postgres,mysql) (default: "postgres") [$DRIVER]
    --operation value, -o value  migration command one of (up,up-to,up-one,down,down-to,reset)
    --to value, -t value         on what element to migrate (default: 0)
    --dir value, -D value        migration file location
@@ -76,7 +76,7 @@ OPTIONS:
 // Also note that there are many default parameters for a convenient start.
 migrate create --dir migrates --migrate-name create_user_table
 // Up migrate
-migrate migrate --opration up --dir migrates --db-host <host> --db-name <name> etc...
+migrate run --opration up --dir migrates --db-host <host> --db-name <name> etc...
 // Rollback all migrates
-migrate migrate --opration reset --dir migrates --db-host <host> --db-name <name> etc...
+migrate run --opration reset --dir migrates --db-host <host> --db-name <name> etc...
 ----
