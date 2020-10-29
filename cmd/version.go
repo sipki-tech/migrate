@@ -9,11 +9,11 @@ import (
 
 var log = logrus.New()
 
-const version = `0.6.0`
+const version = `0.7.0`
 
 var Version = &cli.Command{
 	Name:         "version",
-	Usage:        "get version",
+	Usage:        "cli version",
 	Description:  "getting application version",
 	BashComplete: cli.DefaultAppComplete,
 	Action:       actionVersion,

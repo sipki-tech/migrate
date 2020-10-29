@@ -55,7 +55,12 @@ func (m *Migrater) Migrate(ctx context.Context, cfg core.Config, migrates []core
 
 // Up performs all the migrations received.
 func (m *Migrater) Up(ctx context.Context, migrates ...core.Migrate) error {
-	return m.up(ctx, migrates...)
+	currentVersion, err := m.currentVersion(ctx)
+	if err != nil {
+		return err
+	}
+
+	return m.up(ctx, currentVersion, migrates...)
 }
 
 // UpTo migration to a specific version.
@@ -67,7 +72,12 @@ func (m *Migrater) UpTo(ctx context.Context, versionTo uint, migrates ...core.Mi
 		}
 	}
 
-	return m.up(ctx, upTo...)
+	currentVersion, err := m.currentVersion(ctx)
+	if err != nil {
+		return err
+	}
+
+	return m.up(ctx, currentVersion, upTo...)
 }
 
 // UpOne starting migration of the next version.
@@ -79,10 +89,10 @@ func (m *Migrater) UpOne(ctx context.Context, migrates ...core.Migrate) error {
 
 	for i := range migrates {
 		if currentVersion == 0 {
-			return m.up(ctx, migrates[0])
+			return m.up(ctx, currentVersion, migrates[0])
 		} else if migrates[i].Version == currentVersion {
 			if len(migrates) > i+1 {
-				return m.up(ctx, migrates[i+1])
+				return m.up(ctx, currentVersion, migrates[i+1])
 			} else {
 				return nil
 			}
@@ -92,14 +102,9 @@ func (m *Migrater) UpOne(ctx context.Context, migrates ...core.Migrate) error {
 	return nil
 }
 
-func (m *Migrater) up(ctx context.Context, migrates ...core.Migrate) error {
-	return m.tx(ctx, nil, func(tx *sql.Tx) error {
-		currentVersion, err := m.currentVersion(ctx)
-		if err != nil {
-			return err
-		}
-
-		err = validateMigrates(migrates...)
+func (m *Migrater) up(ctx context.Context, currentVersion uint, migrates ...core.Migrate) error {
+	return m.tx(ctx, func(tx *sql.Tx) error {
+		err := validateMigrates(migrates...)
 		if err != nil {
 			return err
 		}
@@ -132,7 +137,12 @@ func (m *Migrater) up(ctx context.Context, migrates ...core.Migrate) error {
 
 // Reset rolls back all the migrations we've received.
 func (m *Migrater) Reset(ctx context.Context, migrates ...core.Migrate) error {
-	return m.down(ctx, migrates...)
+	currentVersion, err := m.currentVersion(ctx)
+	if err != nil {
+		return err
+	}
+
+	return m.down(ctx, currentVersion, migrates...)
 }
 
 // Down rollback current migration.
@@ -144,7 +154,7 @@ func (m *Migrater) Down(ctx context.Context, migrates ...core.Migrate) error {
 
 	for i := range migrates {
 		if migrates[i].Version == currentVersion {
-			return m.down(ctx, migrates[i])
+			return m.down(ctx, currentVersion, migrates[i])
 		}
 	}
 
@@ -160,17 +170,17 @@ func (m *Migrater) DownTo(ctx context.Context, versionTo uint, migrates ...core.
 		}
 	}
 
-	return m.down(ctx, downTo...)
+	currentVersion, err := m.currentVersion(ctx)
+	if err != nil {
+		return err
+	}
+
+	return m.down(ctx, currentVersion, downTo...)
 }
 
-func (m *Migrater) down(ctx context.Context, migrates ...core.Migrate) error {
-	return m.tx(ctx, nil, func(tx *sql.Tx) error {
-		currentVersion, err := m.currentVersion(ctx)
-		if err != nil {
-			return err
-		}
-
-		err = validateMigrates(migrates...)
+func (m *Migrater) down(ctx context.Context, currentVersion uint, migrates ...core.Migrate) error {
+	return m.tx(ctx, func(tx *sql.Tx) error {
+		err := validateMigrates(migrates...)
 		if err != nil {
 			return err
 		}
@@ -227,8 +237,8 @@ func (m *Migrater) currentVersion(ctx context.Context) (version uint, err error)
 	return version, nil
 }
 
-func (m *Migrater) tx(ctx context.Context, opts *sql.TxOptions, fn func(*sql.Tx) error) error {
-	tx, err := m.db.BeginTx(ctx, opts)
+func (m *Migrater) tx(ctx context.Context, fn func(*sql.Tx) error) error {
+	tx, err := m.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
 	}

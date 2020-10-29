@@ -11,9 +11,9 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var Migrate = &cli.Command{
-	Name:         "migrate",
-	Usage:        "exec migrate",
+var Run = &cli.Command{
+	Name:         "run",
+	Usage:        "run migrate",
 	Description:  "Migrate the DB To the most recent version available",
 	BashComplete: cli.DefaultAppComplete,
 	Before:       beforeMigrateAction,
