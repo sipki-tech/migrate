@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/Meat-Hook/migrate/core"
 	"github.com/Meat-Hook/migrate/fs"
@@ -48,16 +49,25 @@ func migrateAction(ctx *cli.Context) error {
 		return ErrUnknownDriver
 	}
 
-	dsn := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		ctx.String(Host.Name),
-		ctx.Int(Port.Name),
-		ctx.String(User.Name),
-		ctx.String(Pass.Name),
-		ctx.String(Name.Name),
-	)
+	dsn := make([]string, 0, 5)
+	if ctx.String(Host.Name) != "" {
+		dsn = append(dsn, fmt.Sprintf("host=%s", ctx.String(Host.Name)))
+	}
+	if ctx.Int(Port.Name) != 0 {
+		dsn = append(dsn, fmt.Sprintf("port=%d", ctx.Int(Port.Name)))
+	}
+	if ctx.String(User.Name) != "" {
+		dsn = append(dsn, fmt.Sprintf("user=%s", ctx.String(User.Name)))
+	}
+	if ctx.String(Pass.Name) != "" {
+		dsn = append(dsn, fmt.Sprintf("password=%s", ctx.String(Pass.Name)))
+	}
+	if ctx.String(Name.Name) != "" {
+		dsn = append(dsn, fmt.Sprintf("dbname=%s", ctx.String(Name.Name)))
+	}
+	dsn = append(dsn, "sslmode=disable")
 
-	db, err := sql.Open(dbDriver, dsn)
+	db, err := sql.Open(dbDriver, strings.Join(dsn, " "))
 	if err != nil {
 		return fmt.Errorf("open connect to database: %w", err)
 	}
