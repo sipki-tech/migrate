@@ -228,7 +228,7 @@ func (m *Migrater) currentVersion(ctx context.Context) (version uint, err error)
 		return 0, fmt.Errorf("init default table: %w", err)
 	}
 
-	const query = `SELECT version FROM migration ORDER BY time DESC LIMIT 1`
+	const query = `SELECT version FROM migration ORDER BY version DESC LIMIT 1`
 	err = m.db.QueryRowContext(ctx, query).Scan(&version)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return 0, fmt.Errorf("get current version: %w", err)
