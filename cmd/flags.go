@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/Meat-Hook/migrate/core"
-	migrate "github.com/ZergsLaw/zerg-repo"
 	"github.com/urfave/cli/v2"
 )
 
@@ -40,7 +39,7 @@ var (
 		Aliases:    []string{"n"},
 		Usage:      "database name",
 		EnvVars:    []string{"DB_NAME"},
-		Value:      migrate.DBName,
+		Value:      "postgres",
 		Required:   true,
 		HasBeenSet: true,
 	}
@@ -49,7 +48,7 @@ var (
 		Aliases:    []string{"u"},
 		Usage:      "database user",
 		EnvVars:    []string{"DB_USER"},
-		Value:      migrate.DBUser,
+		Value:      "postgres",
 		Required:   true,
 		HasBeenSet: true,
 	}
@@ -58,7 +57,7 @@ var (
 		Aliases:    []string{"p"},
 		Usage:      "database password",
 		EnvVars:    []string{"DB_PASS"},
-		Value:      migrate.DBPassword,
+		Value:      "postgres",
 		Required:   true,
 		HasBeenSet: true,
 	}
@@ -67,7 +66,7 @@ var (
 		Aliases:    []string{"H"},
 		Usage:      "database host",
 		EnvVars:    []string{"DB_HOST"},
-		Value:      migrate.DBHost,
+		Value:      "localhost",
 		Required:   true,
 		HasBeenSet: true,
 	}
@@ -76,7 +75,7 @@ var (
 		Aliases:    []string{"P"},
 		Usage:      "database port",
 		EnvVars:    []string{"DB_PORT"},
-		Value:      migrate.DBPort,
+		Value:      5432,
 		Required:   true,
 		HasBeenSet: true,
 	}
