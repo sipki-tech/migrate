@@ -30,7 +30,7 @@ type Migrater struct {
 }
 
 // New create new instance migrater.
-func New(db *sql.DB, l logrus.FieldLogger) *Migrater {
+func New(db *sql.DB, l logger) *Migrater {
 	return &Migrater{
 		db: db,
 		l:  l,
