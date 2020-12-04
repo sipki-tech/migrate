@@ -9,7 +9,6 @@ import (
 	"sort"
 
 	"github.com/Meat-Hook/migrate/core"
-	"github.com/sirupsen/logrus"
 )
 
 var (
