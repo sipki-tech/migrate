@@ -19,9 +19,13 @@ var (
 	ErrNotSetDown        = errors.New("not set down function")
 )
 
+type logger interface {
+	Info(...interface{})
+}
+
 // Migrater is responsible for data migration to the database.
 type Migrater struct {
-	l  logrus.FieldLogger
+	l  logger
 	db *sql.DB
 }
 
@@ -122,7 +126,7 @@ func (m *Migrater) up(ctx context.Context, currentVersion uint, migrates ...core
 			if err != nil {
 				return fmt.Errorf("up %d: %w", migrate.Version, err)
 			}
-			m.l.Infof("up migrate: version %d", migrate.Version)
+			m.l.Info(fmt.Sprintf("up migrate: version %d", migrate.Version))
 			_, err = tx.ExecContext(ctx, "INSERT INTO migration (version) VALUES ($1)", migrate.Version)
 			if err != nil {
 				return fmt.Errorf("insert new version: %w", err)
@@ -199,7 +203,7 @@ func (m *Migrater) down(ctx context.Context, currentVersion uint, migrates ...co
 			if err != nil {
 				return fmt.Errorf("down %d: %w", migrate.Version, err)
 			}
-			m.l.Infof("rollback migrate: version %d", migrate.Version)
+			m.l.Info(fmt.Sprintf("rollback migrate: version %d", migrate.Version))
 			_, err = tx.ExecContext(ctx, "DELETE FROM migration WHERE version = $1", migrate.Version)
 			if err != nil {
 				return fmt.Errorf("delete version: %w", err)
