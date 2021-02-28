@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/Meat-Hook/migrate/core"
@@ -70,7 +71,7 @@ func (r *Repo) Version(ctx context.Context) (uint, error) {
 	const query = `SELECT version FROM migration ORDER BY version DESC LIMIT 1`
 	version := uint(0)
 	err = r.tx.QueryRowContext(ctx, query).Scan(&version)
-	if err != nil {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return 0, fmt.Errorf("get current version: %w", err)
 	}
 
