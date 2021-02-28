@@ -21,7 +21,7 @@ var application = &cli.App{
 	Name:         filepath.Base(os.Args[0]),
 	HelpName:     filepath.Base(os.Args[0]),
 	Usage:        "Migration migrate.",
-	Commands:     []*cli.Command{cmd.NewMigrate, cmd.Version},
+	Commands:     []*cli.Command{cmd.NewMigrate, cmd.Version, cmd.Run},
 	BashComplete: cli.DefaultAppComplete,
 }
 

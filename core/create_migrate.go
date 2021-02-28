@@ -3,15 +3,12 @@ package core
 import (
 	"context"
 	"fmt"
-	"io"
 	"io/fs"
 	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/Meat-Hook/migrate/internal/sql"
 )
 
 // NewMigrate create and save new migrate file.
@@ -79,7 +76,7 @@ func (c *Core) NewMigrate(_ context.Context, dir, name string) error {
 	const ext = `.sql`
 	migrateName := strings.Join([]string{strconv.Itoa(int(m.Version)), name + ext}, "_")
 
-	buf, err := sql.Marshal(m.Query)
+	buf, err := marshal(m.Query)
 	if err != nil {
 		return fmt.Errorf("marshal query: %w", err)
 	}
@@ -103,13 +100,7 @@ func (c *Core) walkCb(path string, info fs.FileInfo) (*Migrate, error) {
 	// TODO: add error handler.
 	defer file.Close()
 
-	buf, err := io.ReadAll(file)
-	if err != nil {
-		return nil, fmt.Errorf("path [%s]: read all file: %w", path, err)
-	}
-
-	q := Query{}
-	err = sql.Unmarshal(buf, &q)
+	q, err := parse(file)
 	if err != nil {
 		return nil, fmt.Errorf("path [%s]: unmrshal query; %w", path, err)
 	}
@@ -121,7 +112,7 @@ func (c *Core) walkCb(path string, info fs.FileInfo) (*Migrate, error) {
 
 	return &Migrate{
 		Version: version,
-		Query:   q,
+		Query:   *q,
 	}, nil
 }
 
