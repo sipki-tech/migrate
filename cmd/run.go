@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/Meat-Hook/migrate/core"
-	"github.com/Meat-Hook/migrate/fs"
-	"github.com/Meat-Hook/migrate/migrater"
+	"github.com/Meat-Hook/migrate/filesystem"
+	"github.com/Meat-Hook/migrate/repo"
+	"github.com/rs/zerolog"
 	"github.com/urfave/cli/v2"
 )
 
@@ -17,20 +17,8 @@ var Run = &cli.Command{
 	Usage:        "run migrate",
 	Description:  "Migrate the DB To the most recent version available",
 	BashComplete: cli.DefaultAppComplete,
-	Before:       beforeMigrateAction,
-	After:        afterMigrateAction,
 	Action:       migrateAction,
-	Flags:        dbFlags,
-}
-
-func beforeMigrateAction(ctx *cli.Context) error {
-	log.Info("starting migration...")
-	return nil
-}
-
-func afterMigrateAction(ctx *cli.Context) error {
-	log.Info("finished")
-	return nil
+	Flags:        []cli.Flag{Driver, Operation, To, Dir, DSN},
 }
 
 const (
@@ -39,6 +27,10 @@ const (
 )
 
 func migrateAction(ctx *cli.Context) error {
+	logger := zerolog.Ctx(ctx.Context)
+	logger.Info().Msg("starting migration...")
+	defer logger.Info().Msg("finished")
+
 	cmd, err := parse(ctx.String(Operation.Name))
 	if err != nil {
 		return err
@@ -49,25 +41,7 @@ func migrateAction(ctx *cli.Context) error {
 		return ErrUnknownDriver
 	}
 
-	dsn := make([]string, 0, 5)
-	if ctx.String(Host.Name) != "" {
-		dsn = append(dsn, fmt.Sprintf("host=%s", ctx.String(Host.Name)))
-	}
-	if ctx.Int(Port.Name) != 0 {
-		dsn = append(dsn, fmt.Sprintf("port=%d", ctx.Int(Port.Name)))
-	}
-	if ctx.String(User.Name) != "" {
-		dsn = append(dsn, fmt.Sprintf("user=%s", ctx.String(User.Name)))
-	}
-	if ctx.String(Pass.Name) != "" {
-		dsn = append(dsn, fmt.Sprintf("password=%s", ctx.String(Pass.Name)))
-	}
-	if ctx.String(Name.Name) != "" {
-		dsn = append(dsn, fmt.Sprintf("dbname=%s", ctx.String(Name.Name)))
-	}
-	dsn = append(dsn, "sslmode=disable")
-
-	db, err := sql.Open(dbDriver, strings.Join(dsn, " "))
+	db, err := sql.Open(dbDriver, ctx.String(DSN.Name))
 	if err != nil {
 		return fmt.Errorf("open connect to database: %w", err)
 	}
@@ -75,7 +49,7 @@ func migrateAction(ctx *cli.Context) error {
 	defer func() {
 		err := db.Close()
 		if err != nil {
-			log.Warnf("close connect to database: %s", err)
+			logger.Error().Err(err).Msg("close connect to database")
 		}
 	}()
 
@@ -84,15 +58,30 @@ func migrateAction(ctx *cli.Context) error {
 		return fmt.Errorf("ping to database: %w", err)
 	}
 
-	m := migrater.New(db, log)
-	filesSystem := fs.New()
+	filesSystem := filesystem.New()
 
-	c := core.New(filesSystem, m)
+	tx, err := db.BeginTx(ctx.Context, nil)
+	if err != nil {
+		return fmt.Errorf("begin tx: %w", err)
+	}
 
-	return c.Migrate(ctx.Context, ctx.String(Dir.Name), core.Config{
+	r := repo.New(tx)
+	c := core.New(*logger, filesSystem, r)
+
+	err = c.Migrate(ctx.Context, ctx.String(Dir.Name), core.Config{
 		Cmd: cmd,
 		To:  ctx.Uint(To.Name),
 	})
+	if err != nil {
+		errClose := tx.Rollback()
+		if errClose != nil {
+			logger.Error().Err(errClose).Msg("rollback")
+		}
+
+		return fmt.Errorf("migrate error: %w", err)
+	}
+
+	return tx.Commit()
 }
 
 var (
@@ -106,10 +95,6 @@ func parse(op string) (cmd core.MigrateCmd, err error) {
 		cmd = core.Up
 	case core.UpTo.String():
 		cmd = core.UpTo
-	case core.UpOne.String():
-		cmd = core.UpOne
-	case core.Down.String():
-		cmd = core.Down
 	case core.DownTo.String():
 		cmd = core.DownTo
 	case core.Reset.String():

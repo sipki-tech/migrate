@@ -12,6 +12,7 @@ import (
 	"github.com/Meat-Hook/migrate/cmd"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
+	"github.com/rs/zerolog"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
@@ -20,7 +21,7 @@ var application = &cli.App{
 	Name:         filepath.Base(os.Args[0]),
 	HelpName:     filepath.Base(os.Args[0]),
 	Usage:        "Migration migrate.",
-	Commands:     []*cli.Command{cmd.Version, cmd.Run, cmd.NewMigrate},
+	Commands:     []*cli.Command{cmd.NewMigrate, cmd.Version},
 	BashComplete: cli.DefaultAppComplete,
 }
 
@@ -31,7 +32,10 @@ func main() {
 	go func() { <-signals; cancel() }()
 	go forceShutdown(ctx)
 
-	err := application.RunContext(ctx, os.Args)
+	output := zerolog.NewConsoleWriter()
+	logger := zerolog.New(output).With().Timestamp().Logger()
+
+	err := application.RunContext(logger.WithContext(ctx), os.Args)
 	if err != nil {
 		logrus.Fatalf("failed: %s", err)
 	}
