@@ -7,11 +7,33 @@ import (
 	"sort"
 )
 
+type migrateOption struct {
+	fs fs.FS
+}
+
+// MigrateOption option for migration.
+type MigrateOption func(*migrateOption)
+
+// WithCustomFS set custom filesystem.
+func WithCustomFS(fs fs.FS) MigrateOption {
+	return func(option *migrateOption) {
+		option.fs = fs
+	}
+}
+
 // Migrate migrates according to the settings.
-func (c *Core) Migrate(ctx context.Context, dir string, cfg Config) error {
+func (c *Core) Migrate(ctx context.Context, dir string, cfg Config, options ...MigrateOption) error {
+	opt := migrateOption{
+		fs: c.fs,
+	}
+
+	for i := range options {
+		options[i](&opt)
+	}
+
 	// collect migrates
 	var migrates []Migrate
-	err := c.fs.Walk(dir, func(path string, info fs.FileInfo) (err error) {
+	err := c.fs.Walk(opt.fs, dir, func(path string, info fs.FileInfo) (err error) {
 		if info.IsDir() {
 			return nil
 		}

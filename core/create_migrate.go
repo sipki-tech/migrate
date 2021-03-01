@@ -32,7 +32,7 @@ func (c *Core) NewMigrate(_ context.Context, dir, name string) error {
 	currentVersion := uint(0)
 	// collect migrates
 	var migrates []Migrate
-	err = c.fs.Walk(dir, func(path string, info fs.FileInfo) (err error) {
+	err = c.fs.Walk(c.fs, dir, func(path string, info fs.FileInfo) (err error) {
 		if info.IsDir() {
 			return nil
 		}
