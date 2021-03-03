@@ -34,7 +34,7 @@ type (
 	FS interface {
 		fs.FS
 		// Walk for walks on dir.
-		Walk(fs.FS, string, func(string, fs.FileInfo) error) error
+		Walk(string, func(string, fs.FileInfo) error) error
 		// Mkdir make new dir if doesn't exist dir name.
 		Mkdir(path string) error
 		// SaveFile save new file.

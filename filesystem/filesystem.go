@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"path/filepath"
 
 	"github.com/Meat-Hook/migrate/core"
 )
@@ -24,15 +25,10 @@ func (F *FS) Open(name string) (fs.File, error) {
 }
 
 // Walk for implements core.FS.
-func (F *FS) Walk(fileSystem fs.FS, path string, cb func(string, fs.FileInfo) error) error {
-	return fs.WalkDir(fileSystem, path, func(path string, d fs.DirEntry, err error) error {
+func (F *FS) Walk(path string, cb func(string, fs.FileInfo) error) error {
+	return filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return fmt.Errorf("path [%s]: walk error: %w", path, err)
-		}
-
-		info, err := d.Info()
-		if err != nil {
-			return fmt.Errorf("path [%s]: get info: %w", path, err)
 		}
 
 		return cb(path, info)
