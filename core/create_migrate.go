@@ -21,9 +21,11 @@ func (c *Core) NewMigrate(_ context.Context, dir, name string) error {
 
 	year, month, day := t.Date()
 
-	err := c.fs.Mkdir(dir)
+	dirPath := filepath.Join(dir, strconv.Itoa(year), month.String(), strconv.Itoa(day))
+
+	err := c.fs.Mkdir(dirPath)
 	if err != nil {
-		return fmt.Errorf("path [%s]: fs make dir err: %w", dir, err)
+		return fmt.Errorf("path [%s]: fs make dir err: %w", dirPath, err)
 	}
 
 	currentVersion := uint(0)
@@ -48,7 +50,7 @@ func (c *Core) NewMigrate(_ context.Context, dir, name string) error {
 		return nil
 	})
 	if err != nil {
-		return fmt.Errorf("path [%s]: fs walk: %w", dir, err)
+		return fmt.Errorf("path [%s]: fs walk: %w", dirPath, err)
 	}
 
 	// build new migrate data
@@ -71,14 +73,14 @@ func (c *Core) NewMigrate(_ context.Context, dir, name string) error {
 
 	// save new migrate file
 	const ext = `.sql`
-	migrateName := strings.Join([]string{strconv.Itoa(year), month.String(), strconv.Itoa(day), strconv.Itoa(int(m.Version)), name + ext}, "_")
+	migrateName := strings.Join([]string{strconv.Itoa(int(m.Version)), name + ext}, "_")
 
 	buf, err := marshal(m.Query)
 	if err != nil {
 		return fmt.Errorf("marshal query: %w", err)
 	}
 
-	path := filepath.Join(dir, migrateName)
+	path := filepath.Join(dirPath, migrateName)
 	err = c.fs.SaveFile(path, buf)
 	if err != nil {
 		return fmt.Errorf("path [%s]: save migrate file: %w", path, err)
