@@ -14,7 +14,7 @@ on:
 
 jobs:
   lint:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: golangci-lint
@@ -23,7 +23,7 @@ jobs:
           version: v1.37.1
 
   test:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Install Go 1.16
         uses: actions/setup-go@v1
