@@ -15,7 +15,6 @@ on:
 jobs:
   lint:
     runs-on: self-hosted
-
     steps:
       - uses: actions/checkout@v2
       - name: golangci-lint
