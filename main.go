@@ -13,7 +13,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 	"github.com/rs/zerolog"
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
@@ -37,7 +36,7 @@ func main() {
 
 	err := application.RunContext(logger.WithContext(ctx), os.Args)
 	if err != nil {
-		logrus.Fatalf("failed: %s", err)
+		logger.Fatal().Err(err).Msg("failed")
 	}
 }
 

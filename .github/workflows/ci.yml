@@ -18,10 +18,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v0.1.7
+        uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.31
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          version: v1.37.1
 
   test:
     runs-on: ubuntu-latest
@@ -35,4 +34,4 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Start test.
-        run: time go test -race ./...
+        run: go test -race ./...
